@@ -1,21 +1,20 @@
-// src/server.ts
 import type { Server } from 'node:http';
 import { config } from '@/config';
 import app from '@/app';
 import { connectDatabase, disconnectDatabase } from '@/database';
-// import { initializeFirebase } from '@/firebase';
+import { initializeFirebase } from '@/firebase';
 import { logger } from '@/utils/logger';
 
 let server: Server | undefined;
 
 const bootstrap = async (): Promise<void> => {
 
-//   initializeFirebase();
+  initializeFirebase();
 
 
   await connectDatabase();
 
-  // 3. Start the HTTP server
+
   server = app.listen(config.port, () => {
     logger.info(`Server running in ${config.env} mode on port ${config.port}`);
     logger.info(`Health check: http://localhost:${config.port}${config.apiPrefix}/health`);

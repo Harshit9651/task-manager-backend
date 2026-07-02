@@ -44,7 +44,7 @@ export const config = {
   },
 
   cors: {
-    origins: optionalEnv('CORS_ORIGIN', 'http://localhost:3000')
+    origins: optionalEnv('CORS_ORIGIN', 'http://localhost:3000,http://localhost:5173')
       .split(',')
       .map((origin) => origin.trim())
       .filter(Boolean),

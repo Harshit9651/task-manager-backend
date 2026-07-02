@@ -19,6 +19,7 @@ app.use(helmet());
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    console
     if (config.cors.origins.includes('*') || config.cors.origins.includes(origin)) {
       return callback(null, true);
     }
