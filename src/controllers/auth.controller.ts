@@ -13,59 +13,18 @@ import {
 
 class AuthController {
 
-  // googleLogin = asyncHandler(async (req: Request, res: Response) => {
-  //   const { idToken } = req.body as { idToken: string };
-  //   const { user, tokens } = await authService.loginWithGoogle(idToken);
+  googleLogin = asyncHandler(async (req: Request, res: Response) => {
+    const { idToken } = req.body as { idToken: string };
+    const { user, tokens } = await authService.loginWithGoogle(idToken);
 
-  //   res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, refreshCookieOptions);
-  //   sendSuccess(res, {
-  //     message: 'Logged in successfully',
-  //     data: { user, accessToken: tokens.accessToken },
-  //   });
+    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, refreshCookieOptions);
+    sendSuccess(res, {
+      message: 'Logged in successfully',
+      data: { user, accessToken: tokens.accessToken },
+    });
     
-  // });
-googleLogin = asyncHandler(async (req: Request, res: Response) => {
-  const { idToken } = req.body as { idToken: string };
-
-  console.log("\n========== GOOGLE LOGIN ==========");
-  console.log("Firebase ID Token:");
-  console.log(idToken);
-
-  const { user, tokens } = await authService.loginWithGoogle(idToken);
-
-  console.log("\n========== USER ==========");
-  console.dir(user, { depth: null });
-
-  console.log("\n========== TOKENS ==========");
-  console.log("Access Token:");
-  console.log(tokens.accessToken);
-
-  console.log("\nRefresh Token:");
-  console.log(tokens.refreshToken);
-
-  res.cookie(
-    REFRESH_COOKIE_NAME,
-    tokens.refreshToken,
-    refreshCookieOptions
-  );
-
-  console.log("\n========== COOKIE ==========");
-  console.dir({
-    cookieName: REFRESH_COOKIE_NAME,
-    cookieValue: tokens.refreshToken,
-    cookieOptions: refreshCookieOptions,
-  }, { depth: null });
-
-  sendSuccess(res, {
-    message: "Logged in successfully",
-    data: {
-      user,
-      accessToken: tokens.accessToken,
-    },
   });
 
-  console.log("\n========== RESPONSE SENT ==========\n");
-});
  
   refresh = asyncHandler(async (req: Request, res: Response) => {
     const token =
