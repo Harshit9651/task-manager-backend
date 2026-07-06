@@ -23,6 +23,11 @@ export interface IUser extends SoftDeleteFields {
   refreshTokenHash?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  notificationPreferences: {
+  dailyFollowUpReminder: boolean;
+  weeklyReport: boolean;
+  timezone: string;
+};
 }
 
 /** Hydrated document (adds Mongoose Document + soft-delete instance methods). */
@@ -46,10 +51,24 @@ const userSchema = new Schema<IUserDocument>(
     emailVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true, index: true },
     lastLoginAt: { type: Date, default: null },
-    // Hash of the current refresh token — never selected/returned by default.
     refreshTokenHash: { type: String, default: null, select: false },
+    notificationPreferences: {
+  dailyFollowUpReminder: {
+    type: Boolean,
+    default: true,
   },
-  baseSchemaOptions,
+  weeklyReport: {
+    type: Boolean,
+    default: true,
+  },
+  timezone: {
+    type: String,
+    default: "Asia/Kolkata",
+  },
+},
+    
+  },
+
 );
 
 userSchema.plugin(softDeletePlugin);

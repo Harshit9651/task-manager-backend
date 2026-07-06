@@ -21,7 +21,7 @@ class UserService extends BaseService<IUserDocument> {
     if (existing && (existing.isDeleted || !existing.isActive)) {
       throw new ForbiddenError('This account has been deactivated');
     }
-
+const isNewUser = !existing;
     const user = await UserModel.findOneAndUpdate(
       { firebaseUid: profile.uid },
       {
@@ -34,6 +34,19 @@ class UserService extends BaseService<IUserDocument> {
       },
       { new: true, upsert: true, runValidators: true },
     );
+try {
+    if (isNewUser && user) {
+        const { sendWelcomeEmail } = await import("@/services/welcome.service");
+
+        void sendWelcomeEmail({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+        });
+    }
+} catch (err) {
+    console.error("Failed to send welcome email:", err);
+}
 
     return user as IUserDocument;
   }

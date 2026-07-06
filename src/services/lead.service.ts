@@ -174,6 +174,53 @@ async updateFollowUpForUser(
 
     return raw;
   }
+  async getFollowUpBuckets(userId: string, timeZone: string) {
+    const { getTodayInTimezone, formatDateInTimezone, formatTimeInTimezone } = await import('@/utils/datetime.util');
+    const today = getTodayInTimezone(timeZone);
+
+    const leads = await LeadModel.find({ user: new Types.ObjectId(userId), nextFollowUp: { $ne: null } }).sort({ nextFollowUp: 1 });
+
+    const dueToday = [] as ReturnType<typeof this.toEmailItem>[];
+    const overdue = [] as ReturnType<typeof this.toEmailItem>[];
+    for (const lead of leads) {
+      if (!lead.nextFollowUp) continue;
+      const day = formatDateInTimezone(lead.nextFollowUp, timeZone);
+      const item = this.toEmailItem(lead, { time: formatTimeInTimezone(lead.nextFollowUp, timeZone) });
+      if (day === today) dueToday.push(item);
+      else if (day < today) overdue.push(item);
+    }
+    return { today, dueToday, overdue };
+  }
+
+  async getUpcomingFollowUps(userId: string, timeZone: string, days = 7) {
+    const { getTodayInTimezone, dateOffsetInTimezone, formatDateInTimezone, formatShortDate } = await import('@/utils/datetime.util');
+    const today = getTodayInTimezone(timeZone);
+    const until = dateOffsetInTimezone(days, timeZone);
+
+    const leads = await LeadModel.find({ user: new Types.ObjectId(userId), nextFollowUp: { $ne: null } }).sort({ nextFollowUp: 1 });
+    return leads
+      .filter((l) => {
+        if (!l.nextFollowUp) return false;
+        const day = formatDateInTimezone(l.nextFollowUp, timeZone);
+        return day > today && day <= until;
+      })
+      .map((l) => this.toEmailItem(l, { date: formatShortDate(l.nextFollowUp as Date, timeZone) }));
+  }
+
+  countCreatedSince(userId: string, since: Date) {
+    return LeadModel.countDocuments({ user: new Types.ObjectId(userId), createdAt: { $gte: since } });
+  }
+
+  private toEmailItem(lead: ILeadDocument, extra: { time?: string; date?: string }) {
+    return {
+      company: lead.company,
+      contactName: lead.contactName,
+      email: lead.email,
+      status: lead.status,
+      temperature: lead.temperature,
+      ...extra,
+    };
+  }
 }
 
 export const leadService = new LeadService();

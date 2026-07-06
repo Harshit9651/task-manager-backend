@@ -27,6 +27,21 @@ export const config = {
 
   port: toNumber(optionalEnv('PORT', '5000'), 'PORT'),
   apiPrefix: optionalEnv('API_PREFIX', '/api'),
+  app: {
+    name: optionalEnv('APP_NAME', 'task-manager-thdevwix'),
+    url: optionalEnv('APP_URL', 'http://localhost:5000'),
+  },
+    mail: {
+    resendApiKey: optionalEnv('RESEND_API_KEY', ''),
+    from: optionalEnv('EMAIL_FROM', ' <mail.thdevwix.com>'),
+  },
+
+  cron: {
+    enabled: optionalEnv('CRON_ENABLED', 'true') === 'true',
+    timezone: optionalEnv('CRON_TIMEZONE', 'UTC'),
+    dailyReminder: optionalEnv('DAILY_REMINDER_CRON', '0 8 * * *'),
+    weeklyReport: optionalEnv('WEEKLY_REPORT_CRON', '0 8 * * 1'),
+  },
 
   mongo: {
     uri: optionalEnv('MONGODB_URI', 'mongodb://127.0.0.1:27017/saas_crm'),
@@ -60,14 +75,7 @@ export const config = {
     privateKey: optionalEnv('FIREBASE_PRIVATE_KEY', '').replace(/\\n/g, '\n'),
   },
 
-  mail: {
-    host: optionalEnv('SMTP_HOST', ''),
-    port: toNumber(optionalEnv('SMTP_PORT', '587'), 'SMTP_PORT'),
-    secure: optionalEnv('SMTP_SECURE', 'false') === 'true',
-    user: optionalEnv('SMTP_USER', ''),
-    pass: optionalEnv('SMTP_PASS', ''),
-    from: optionalEnv('EMAIL_FROM', 'SaaS CRM <no-reply@example.com>'),
-  },
+
 };
 
 

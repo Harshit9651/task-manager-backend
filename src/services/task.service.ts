@@ -158,6 +158,19 @@ class TaskService extends BaseService<ITaskDocument> {
       low: result?.low ?? 0,
     };
   }
+  async getTasksForDate(userId: string, date: string) {
+    return TaskModel.find({ user: new Types.ObjectId(userId), date }).sort({ createdAt: 1 });
+  }
+
+  async getWeeklyTaskSummary(userId: string, since: Date) {
+    const user = new Types.ObjectId(userId);
+    const [created, completed, pending] = await Promise.all([
+      TaskModel.countDocuments({ user, createdAt: { $gte: since } }),
+      TaskModel.countDocuments({ user, status: 'completed', completedAt: { $gte: since } }),
+      TaskModel.countDocuments({ user, status: 'pending' }),
+    ]);
+    return { created, completed, pending };
+  }
 }
 
 export const taskService = new TaskService();
