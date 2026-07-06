@@ -14,7 +14,6 @@ class LeadController {
   create = asyncHandler(async (req: Request, res: Response) => {
     const payload = stripEmptyStrings(pick(req.body, LEAD_CREATABLE_FIELDS));
     const lead = await leadService.createForUser(req.user!.id, payload);
-    console.log("lead is created :",lead)
     sendCreated(res, { lead }, 'Lead created successfully');
   });
 
