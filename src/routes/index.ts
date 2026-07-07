@@ -5,6 +5,7 @@ import userRoutes from '@/routes/user.routes';
 import leadRoutes from '@/routes/lead.routes';
 import taskRoutes from '@/routes/task.routes';
 import emailRoutes from '@/routes/email.routes';
+import boardRoutes from '@/routes/board.routes';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/users', userRoutes);
 router.use('/leads', leadRoutes);
 router.use('/tasks', taskRoutes);
 router.use('/emails', emailRoutes);
+router.use('/boards', boardRoutes);
 
 export default router;
