@@ -37,20 +37,39 @@ class LeadService extends BaseService<ILeadDocument> {
     return lead;
   }
 
-  async updateForUser(
-    userId: string,
-    id: string,
-    payload: Record<string, unknown>,
-  ): Promise<ILeadDocument> {
-    const lead = await LeadModel.findOneAndUpdate(
-      { _id: id, user: userId },
-      { $set: payload } as UpdateQuery<ILeadDocument>,
-      { new: true, runValidators: true },
-    );
-    if (!lead) throw new NotFoundError('Lead not found');
-    return lead;
+  // async updateForUser(
+  //   userId: string,
+  //   id: string,
+  //   payload: Record<string, unknown>,
+  // ): Promise<ILeadDocument> {
+  //   const lead = await LeadModel.findOneAndUpdate(
+  //     { _id: id, user: userId },
+  //     { $set: payload } as UpdateQuery<ILeadDocument>,
+  //     { new: true, runValidators: true },
+  //   );
+  //   if (!lead) throw new NotFoundError('Lead not found');
+  //   return lead;
+  // }
+  // In LeadService — replace/augment updateForUser with this:
+
+  async updateForUser(userId: string, id: string, payload: Record<string, unknown>): Promise<ILeadDocument> {
+  const lead = await LeadModel.findOneAndUpdate(
+    { _id: id, user: userId },
+    { $set: payload },
+    { new: true, runValidators: true },
+  );
+  if (!lead) throw new NotFoundError('Lead not found');
+console.log("hii")
+  // Auto-create a client the moment a lead is converted.
+  if (payload.status === 'converted_to_client') {
+    console.log("hiii")
+    const { clientService } = await import('@/services/client.service');
+    await clientService.createFromLead(lead); 
   }
-  async updateStatusForUser(
+
+  return lead;
+}
+async updateStatusForUser(
   userId: string,
   id: string,
   status: string,
@@ -68,8 +87,13 @@ class LeadService extends BaseService<ILeadDocument> {
       runValidators: true,
     },
   );
-
   if (!lead) throw new NotFoundError('Lead not found');
+
+console.log("called status")
+  if (status === 'converted_to_client') {
+    const { clientService } = await import('@/services/client.service');
+    await clientService.createFromLead(lead);
+  }
 
   return lead;
 }

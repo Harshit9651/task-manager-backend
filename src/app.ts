@@ -3,7 +3,7 @@ import cors, { type CorsOptions } from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-
+import path from 'node:path';
 import { config } from '@/config';
 import { apiLimiter } from '@/middleware/rateLimiter';
 import { errorHandler, notFoundHandler } from '@/middleware/errorHandler';
@@ -14,6 +14,7 @@ const app: Application = express();
 app.set('trust proxy', 1);
 
 
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 app.use(helmet());
 
 const corsOptions: CorsOptions = {
@@ -30,7 +31,6 @@ const corsOptions: CorsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser(config.cookie.secret));
@@ -48,6 +48,12 @@ app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: 'SaaS CRM API is running' });
 });
 
+app.get("/ping", (req, res) => {
+  res.json({
+    ok: true,
+    time: Date.now(),
+  });
+});
 
 app.use(notFoundHandler);
 app.use(errorHandler);
