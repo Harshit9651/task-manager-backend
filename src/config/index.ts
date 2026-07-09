@@ -59,7 +59,7 @@ export const config = {
   },
 
   cors: {
-    origins: optionalEnv('CORS_ORIGIN', 'http://localhost:3000,http://localhost:5173')
+    origins: optionalEnv('CORS_ORIGIN', 'http://localhost:3000,http://localhost:5173,https://task-manager-pi-eight-75.vercel.app')
       .split(',')
       .map((origin) => origin.trim())
       .filter(Boolean),
