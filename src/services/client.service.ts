@@ -146,7 +146,10 @@ class ClientService extends BaseService<IClientDocument> {
   async updateInvoiceStatus(userId: string, id: string, invId: string, status: InvoiceStatus): Promise<IClientDocument> {
     const client = await ClientModel.findOne({ _id: id, user: userId });
     if (!client) throw new NotFoundError('Client not found');
-    const invoice = client.invoices.id(invId);
+    const invoice = client.invoices.find(
+  (i) => i._id?.toString() === invId
+);
+
     if (!invoice) throw new NotFoundError('Invoice not found');
     invoice.status = status;
     if (status === 'sent' && !invoice.issuedDate) invoice.issuedDate = new Date();
@@ -157,10 +160,19 @@ class ClientService extends BaseService<IClientDocument> {
   async deleteInvoice(userId: string, id: string, invId: string): Promise<IClientDocument> {
     const client = await ClientModel.findOne({ _id: id, user: userId });
     if (!client) throw new NotFoundError('Client not found');
-    const invoice = client.invoices.id(invId);
-    if (!invoice) throw new NotFoundError('Invoice not found');
-    invoice.deleteOne();
-    await client.save();
+
+
+  const index = client.invoices.findIndex(
+  (i) => i._id?.toString() === invId
+);
+
+if (index === -1) {
+  throw new NotFoundError("Invoice not found");
+}
+
+client.invoices.splice(index, 1);
+
+await client.save();
     return client;
   }
 
@@ -176,10 +188,15 @@ class ClientService extends BaseService<IClientDocument> {
   async deleteDocument(userId: string, id: string, docId: string): Promise<IClientDocument> {
     const client = await ClientModel.findOne({ _id: id, user: userId });
     if (!client) throw new NotFoundError('Client not found');
-    const doc = client.documents.id(docId);
-    if (!doc) throw new NotFoundError('Document not found');
-    doc.deleteOne();
-    await client.save();
+ const index = client.documents.findIndex(
+  (d) => d._id?.toString() === docId
+);
+
+if (index === -1) {
+  throw new NotFoundError("Document not found");
+}
+
+client.documents.splice(index, 1);
     return client;
   }
 }

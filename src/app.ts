@@ -48,7 +48,7 @@ app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({ success: true, message: 'SaaS CRM API is running' });
 });
 
-app.get("/ping", (req, res) => {
+app.get("/ping", (_, res) => {
   res.json({
     ok: true,
     time: Date.now(),

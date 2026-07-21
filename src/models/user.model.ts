@@ -1,6 +1,5 @@
 // src/models/user.model.ts
 import { Schema, model, type Document } from 'mongoose';
-import { baseSchemaOptions } from '@/database/schema.options';
 import {
   softDeletePlugin,
   type SoftDeleteFields,
@@ -76,7 +75,7 @@ userSchema.plugin(softDeletePlugin);
 // Defense-in-depth: strip sensitive fields from any JSON serialization.
 userSchema.set('toJSON', {
   virtuals: true,
-  transform: (_doc, ret: Record<string, unknown>) => {
+  transform: (_doc, ret: any) => {
     ret.id = ret._id;
     delete ret._id;
     delete ret.refreshTokenHash;

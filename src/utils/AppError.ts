@@ -2,7 +2,7 @@ import { HttpStatus } from '@/constants/httpStatus';
 
 export class AppError extends Error {
   public readonly statusCode: number;
-  public readonly status: 'fail' | 'error';
+  public readonly status: 'fail' | 'error' | number;
   public readonly isOperational: boolean;
   public readonly errors?: unknown;
 

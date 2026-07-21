@@ -1,5 +1,4 @@
 import { Schema, model, type Document } from 'mongoose';
-import { baseSchemaOptions } from '@/database/schema.options';
 import {
   softDeletePlugin,
   type SoftDeleteMethods,

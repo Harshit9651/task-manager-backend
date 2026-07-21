@@ -1,4 +1,4 @@
-import { Types, type UpdateQuery } from 'mongoose';
+import { Types } from 'mongoose';
 import { BaseService } from '@/services/base.service';
 import { LeadModel, type ILeadDocument } from '@/models/lead.model';
 import { NotFoundError } from '@/utils/AppError';

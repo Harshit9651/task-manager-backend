@@ -1,5 +1,4 @@
 import { Resend } from 'resend';
-import { config } from '@/config';
 import { logger } from '@/utils/logger';
 import { AppError } from '@/utils/AppError';
 import { HttpStatus } from '@/constants/httpStatus';
